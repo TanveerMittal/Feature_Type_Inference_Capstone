@@ -27,7 +27,10 @@ if __name__ == "__main__":
 
     transformer = AutoModel.from_pretrained('roberta-base')
 
-    device = torch.device("cuda")
+    if torch.cuda.is_available():
+        device = torch.device("cuda")
+    else:
+        device = torch.device("cpu")
 
     for param in transformer.parameters():
         param.requires_grad = False
