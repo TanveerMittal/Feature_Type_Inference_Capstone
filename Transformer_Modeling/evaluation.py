@@ -3,7 +3,10 @@ import torch.nn as nn
 import numpy as np
 from sklearn.metrics import accuracy_score
 
-device = torch.device("cuda")
+if torch.cuda.is_available():
+    device = torch.device("cuda")
+else:
+    device = torch.device("cpu")
 
 def evaluate(model, dataloader, cross_entropy, labels):
   

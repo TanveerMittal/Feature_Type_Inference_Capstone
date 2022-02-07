@@ -1,7 +1,11 @@
 import torch
 import torch.nn as nn
 import numpy as np
-device = torch.device("cuda")
+
+if torch.cuda.is_available():
+    device = torch.device("cuda")
+else:
+    device = torch.device("cpu")
 
 def train(model, train_dataloader, optimizer, cross_entropy):
   

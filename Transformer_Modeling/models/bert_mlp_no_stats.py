@@ -1,7 +1,10 @@
 import torch
 import torch.nn as nn
 
-device = torch.device("cuda")
+if torch.cuda.is_available():
+    device = torch.device("cuda")
+else:
+    device = torch.device("cpu")
 
 class BERT_mlp_no_stats(nn.Module):
 
