@@ -30,7 +30,7 @@ def train(model, train_dataloader, optimizer, cross_entropy):
         # get model predictions for the current batch
         preds = model(sent_id, mask, features)
         # compute the loss between actual and predicted values
-        loss = cross_entropy(preds, labels)
+        loss = cross_entropy(preds, labels.long())
 
         # add on to the total loss
         total_loss = total_loss + loss.item()

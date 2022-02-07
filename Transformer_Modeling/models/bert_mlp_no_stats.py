@@ -3,7 +3,7 @@ import torch.nn as nn
 
 device = torch.device("cuda")
 
-class BERT_mlp_v1_no_stats(nn.Module):
+class BERT_mlp_no_stats(nn.Module):
 
     def __init__(self, bert):
 

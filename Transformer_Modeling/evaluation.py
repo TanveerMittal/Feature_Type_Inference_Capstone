@@ -38,7 +38,7 @@ def evaluate(model, dataloader, cross_entropy, labels):
             preds = model(sent_id, mask, features)
 
             # compute the validation loss between actual and predicted values
-            loss = cross_entropy(preds,batch_labels)
+            loss = cross_entropy(preds,batch_labels.long())
 
             total_loss = total_loss + loss.item()
 

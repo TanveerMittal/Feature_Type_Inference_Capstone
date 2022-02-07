@@ -3,7 +3,7 @@ import torch.nn as nn
 
 device = torch.device("cuda")
 
-class BERT_mlp_v1(nn.Module):
+class BERT_mlp(nn.Module):
 
     def __init__(self, bert):
 
@@ -18,7 +18,7 @@ class BERT_mlp_v1(nn.Module):
         self.relu =  nn.ReLU()
 
         # dense layer 1
-        self.fc1 = nn.Linear(793,512)
+        self.fc1 = nn.Linear(787,512)
         
         # dense layer 2 (Output layer)
         self.fc2 = nn.Linear(512, 9)
