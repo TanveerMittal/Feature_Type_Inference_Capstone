@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn
 import numpy as np
+from evaluation import *
+from transformers import AdamW
 
 if torch.cuda.is_available():
     device = torch.device("cuda")
@@ -32,7 +34,8 @@ def train(model, train_dataloader, optimizer, cross_entropy):
         model.zero_grad()        
 
         # get model predictions for the current batch
-        preds = model(sent_id, mask, features)
+        preds, _ = model(sent_id, mask, features)
+        
         # compute the loss between actual and predicted values
         loss = cross_entropy(preds, labels.long())
 
@@ -64,3 +67,42 @@ def train(model, train_dataloader, optimizer, cross_entropy):
     
     #returns the loss and predictions
     return avg_loss, total_preds
+
+def train_model(model, train_dataloader, val_dataloader, test_dataloader, test_data, cross_entropy, model_name, epochs=50, lr=1e-5):
+     # set initial loss to infinite
+    best_valid_loss = float('inf')
+
+    # empty lists to store training and validation loss of each epoch
+    train_losses=[]
+    valid_losses=[]
+    # define the optimizer
+    optimizer = AdamW(model.parameters(),
+                    lr = 5e-7)
+    # number of training epochs
+    epochs = 25
+    #for each epoch
+    for epoch in range(epochs):
+        
+        print('\n Epoch {:} / {:}'.format(epoch + 1, epochs))
+        
+        #train model
+        train_loss, _, = train(model, train_dataloader, optimizer, cross_entropy)
+        
+        #evaluate model
+        valid_loss, _, valid_acc = evaluate(model, val_dataloader, cross_entropy, y_val)
+        
+        #save the best model
+        if valid_loss < best_valid_loss:
+            best_valid_loss = valid_loss
+            torch.save(model.state_dict(), '../models/exports/%s.pt' % model_name)
+        
+        # append training and validation loss
+        train_losses.append(train_loss)
+        valid_losses.append(valid_loss)
+
+        print(f'\nTraining Loss: {train_loss:.3f}')
+        print(f'Validation Loss: {valid_loss:.3f}')
+        print(f'Validation Accuracy: {valid_acc:.3f}')
+    
+    loss, preds, acc = evaluate(model, test_dataloader, cross_entropy, test_data["label"])
+    print("Test Accuracy:", acc)

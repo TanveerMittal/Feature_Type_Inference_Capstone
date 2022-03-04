@@ -38,8 +38,7 @@ def evaluate(model, dataloader, cross_entropy, labels):
         with torch.no_grad():
 
             # model predictions
-            preds = model(sent_id, mask, features)
-
+            preds, _ = model(sent_id, mask, features)
             # compute the validation loss between actual and predicted values
             loss = cross_entropy(preds,batch_labels.long())
 

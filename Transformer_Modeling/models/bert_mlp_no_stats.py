@@ -10,7 +10,7 @@ class BERT_mlp_no_stats(nn.Module):
 
     def __init__(self, bert):
 
-        super(BERT_mlp_v1_no_stats, self).__init__()
+        super(BERT_mlp_no_stats, self).__init__()
 
         self.bert = bert 
 

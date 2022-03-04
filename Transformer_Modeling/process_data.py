@@ -1,8 +1,7 @@
-from lib2to3.pytree import convert
 import numpy as np
 import pandas as pd
 import torch
-from transformers import BertTokenizerFast, XLNetTokenizerFast, RobertaTokenizerFast, XLMRobertaTokenizerFast, GPT2TokenizerFast
+from transformers import BertTokenizerFast, XLNetTokenizerFast, RobertaTokenizerFast, XLMRobertaTokenizerFast, BartTokenizerFast
 from sklearn.preprocessing import StandardScaler
 from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
 
@@ -87,8 +86,8 @@ def convert_labels(df_zoo):
     y.name = "label"
     return y
 
-def preprocess(df_zoo, sep_token=" [SEP] "):
-    text_features = ['Attribute_name', 'sample_1', 'sample_2', 'sample_3', 'sample_4', 'sample_5']
+def preprocess(df_zoo, sep_token=" [SEP] ", 
+               text_features=['Attribute_name', 'sample_1', 'sample_2', 'sample_3', 'sample_4', 'sample_5']):
     text = df_zoo[text_features].apply(lambda row: sep_token.join([str(x) for x in row.to_list()]), axis=1)
     text.name = "text"
 
@@ -140,12 +139,7 @@ def init_dataloaders(x_train, y_train, x_val, y_val, test_data, batch_size=32, m
     if model == "xlm-roberta":
         tokens_train, tokens_val, tokens_test = tokenize(XLMRobertaTokenizerFast.from_pretrained("xlm-roberta-base"),
                                                                                     x_train, x_val, test_data)
-    if model == "gpt2":
-        tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
-        tokenizer.add_special_tokens({'pad_token': '<pad>'})
-        tokens_train, tokens_val, tokens_test = tokenize(tokenizer, x_train, x_val, test_data)
                                                             
-
     # convert data to tensors
     train_seq = torch.tensor(tokens_train['input_ids'])
     train_mask = torch.tensor(tokens_train['attention_mask'])

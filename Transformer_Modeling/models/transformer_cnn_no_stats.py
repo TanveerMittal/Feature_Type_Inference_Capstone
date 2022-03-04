@@ -7,11 +7,11 @@ if torch.cuda.is_available():
 else:
     device = torch.device("cpu")
 
-class Transformer_cnn(nn.Module):
+class Transformer_cnn_no_stats(nn.Module):
 
     def __init__(self, transformer, num_kernels, kernel_sizes):
 
-        super(Transformer_cnn, self).__init__()
+        super(Transformer_cnn_no_stats, self).__init__()
 
         self.transformer = transformer 
     
@@ -47,13 +47,11 @@ class Transformer_cnn(nn.Module):
         x = [F.max_pool1d(i, i.size(2)).squeeze(2) for i in x]  
         
         x = torch.cat(x, 1)
-        
-        conv_out = torch.cat([x, features], 1)
-        
-        x = self.dropout(conv_out)  
+            
+        x = self.dropout(x)  
         
         x = self.fc1(x)  
         
         x = self.softmax(x)
 
-        return x, conv_out
+        return x, None
