@@ -334,7 +334,7 @@ def FeatureExtraction(data,data1,flag):
     arr2 = [str(x) for x in arr2]
     arr3 = data['sample_3'].values
     arr3 = [str(x) for x in arr3]    
-    print(len(arr1),len(arr2))
+#     print(len(arr1),len(arr2))
     if flag:
         X = vectorizerName.fit_transform(arr)
         X1 = vectorizerSample.fit_transform(arr1)
