@@ -4,7 +4,6 @@
 ### Mentor: Arun Kumar
 
 ## Resources:
-------------------
 - [Torch Hub Release of Pretrained Models](https://github.com/TanveerMittal/BERT-Feature-Type-Inference)
     - Allows anyone to load our models in a single line of code using the th PyTorch Hub API
 - [Tech Report](https://tanveermittal.github.io/capstone/)
@@ -14,7 +13,6 @@
 - [Project Sortinghat](https://adalabucsd.github.io/sortinghat.html)
 
 ## Overview:
-------------------
 
 The first step for AutoML software is to identify the feature types of individual columns in input data. This information then allows the software to understand the data and then preprocess it to allow machine learning algorithms to run on it. Project Sortinghat frames this task of Feature Type Inference as a machine learning multiclass classification problem. As an extension of Project SortingHat, we worked on applying transformer models to produce state of the art performance on this task and did further studies on class specific accuracies and sample sizes in preprocessing. Our models currently outperform all existing tools currently benchmarked against SortingHat's ML Data Prep Zoo.
 
