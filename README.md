@@ -14,7 +14,7 @@
 
 ## Overview:
 
-The first step for AutoML software is to identify the feature types of individual columns in input data. This information then allows the software to understand the data and then preprocess it to allow machine learning algorithms to run on it. Project Sortinghat frames this task of Feature Type Inference as a machine learning multiclass classification problem. As an extension of Project SortingHat, we worked on applying transformer models to produce state of the art performance on this task and did further studies on class specific accuracies and sample sizes in preprocessing. Our models currently outperform all existing tools currently benchmarked against SortingHat's ML Data Prep Zoo.
+One of the first steps in automated data prepration in AutoML platforms is to identify the feature types of individual columns in input data. This information then allows the software to understand the data and then preprocess it to allow machine learning algorithms to run on it. Project Sortinghat frames this task of Feature Type Inference as a machine learning multiclass classification problem. As an extension of Project SortingHat, we worked on applying Bidirectional Encoding Representation Transformer(BERT) models to this task and did further investigations on the effects of adjusting the feature set for input with a random forest model. Our BERT CNN models currently outperform all existing tools currently benchmarked against SortingHat's ML Data Prep Zoo.
 
 This repository includes code for architecture and feature experiments for the transformer models. The results of our 2 released models can be seen in the tables below:
 
