@@ -8,7 +8,19 @@ if torch.cuda.is_available():
 else:
     device = torch.device("cpu")
 
-def evaluate(model, dataloader, cross_entropy, labels):
+def evaluate(model, dataloader, cross_entropy, labels, stats=True):
+    """
+    Evaluates transformer CNN model on given data
+
+    Args:
+        model: Pytorch model object
+        dataloader: PyTorch dataloader object
+        cross_entropy: PyTorch loss function object
+        labels: array of labels for given data
+        stats: boolean indicating if model uses descriptive statistics
+    Returns:
+        The average loss, predictions, and accuracy computed on given data
+    """
   
     print("\nEvaluating...")
 
@@ -38,7 +50,11 @@ def evaluate(model, dataloader, cross_entropy, labels):
         with torch.no_grad():
 
             # model predictions
-            preds, _ = model(sent_id, mask, features)
+            if stats:
+                preds = model(sent_id, mask, features)
+            else:
+                preds = model(sent_id, mask)
+
             # compute the validation loss between actual and predicted values
             loss = cross_entropy(preds,batch_labels.long())
 

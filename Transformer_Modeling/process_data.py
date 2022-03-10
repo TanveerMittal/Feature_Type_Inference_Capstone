@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import torch
-from transformers import BertTokenizerFast, XLNetTokenizerFast, RobertaTokenizerFast, XLMRobertaTokenizerFast, BartTokenizerFast
+from transformers import BertTokenizerFast, XLNetTokenizerFast, RobertaTokenizerFast
 from sklearn.preprocessing import StandardScaler
 from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
 
@@ -18,13 +18,28 @@ labels = {
 }
 
 def load_data(data_dir):
+    """
+    Loads benchmark data into Pandas DataFrame from given directory
+
+    Args:
+        data_dir: string of path to benchmark data
+    Returns:
+        Pandas DataFrames of training and testing benchmark data
+    """
     df_zoo_train = pd.read_csv("%s/data_train.csv"%data_dir)
     df_zoo_train = df_zoo_train[~df_zoo_train["std_dev"].isnull()]
     df_zoo_test = pd.read_csv("%s/data_test.csv"%data_dir)
     return df_zoo_train, df_zoo_test
 
 def scale_stats(data):
+    """
+    Normalizes the values of descriptive statistics in preprocessing
 
+    Args:
+        data: Pandas DataFrame containing descriptive statistics
+    Returns:
+        Pandas DataFrame of normalized descriptive statistics
+    """
     data1 = data[['total_vals', 'num_nans', '%_nans', 'num_of_dist_val', '%_dist_val', 'mean',
            'std_dev', 'min_val', 'max_val', 'mean_word_count', 'std_dev_word_count',
             'mean_stopword_total', 'mean_whitespace_count',
@@ -82,12 +97,30 @@ def scale_stats(data):
     return data1
 
 def convert_labels(df_zoo):
+    """
+    Converts string labels of feature types to integers
+
+    Args:
+        df_zoo: preprocessed Pandas DataFrame of benchmark data
+    Returns:
+        Array of labels as integers
+    """
     y = df_zoo["y_act"].apply(lambda x: labels[x])
     y.name = "label"
     return y
 
 def preprocess(df_zoo, sep_token=" [SEP] ", 
                text_features=['Attribute_name', 'sample_1', 'sample_2', 'sample_3', 'sample_4', 'sample_5']):
+    """
+    Preprocesses the text and descriptive statistics from benchmark data
+
+    Args:
+        df_zoo: Pandas DataFrame of benchmark data
+        sep_token: seperation token to be used to seperate column name and sample values
+        text_features: list of column names to extract text features from
+    Returns:
+        Pandas DataFrame of preprocessed features
+    """
     text = df_zoo[text_features].apply(lambda row: sep_token.join([str(x) for x in row.to_list()]), axis=1)
     text.name = "text"
 
@@ -101,6 +134,17 @@ def preprocess(df_zoo, sep_token=" [SEP] ",
     return pd.concat([text, features, labels], axis=1).dropna()
 
 def tokenize(tokenizer, x_train, x_val, test_data):
+    """
+    Tokenizes the text features of the benchmark data for transformer model input
+
+    Args:
+        tokenizer: HuggingFace Transformer library tokenizer object
+        x_train: preprocessed Pandas DataFrame of training data
+        x_val: preprocessed Pandas DataFrame of validation data
+        test_data: preprocessed Pandas DataFrame of testing data
+    Returns:
+        Tokenized data for all datasets
+    """
     tokens_train = tokenizer.batch_encode_plus(
         x_train["text"].tolist(),
         max_length = 100,
@@ -108,7 +152,6 @@ def tokenize(tokenizer, x_train, x_val, test_data):
         truncation=True
     )
 
-    # tokenize and encode sequences in the validation set
     tokens_val = tokenizer.batch_encode_plus(
         x_val["text"].tolist(),
         max_length = 100,
@@ -126,7 +169,26 @@ def tokenize(tokenizer, x_train, x_val, test_data):
     return tokens_train, tokens_val, tokens_test 
 
 def init_dataloaders(x_train, y_train, x_val, y_val, test_data, batch_size=32, model="bert"):
-    
+    """
+    Loads all training, validation, and testing data into PyTorch dataloader objects
+
+    Args:
+        x_train: Pandas DataFrame of training features
+        y_train: array of training labels
+        x_val: Pandas DataFrame of validation features
+        y_val: array of validation labels
+        test_data: Pandas DataFrame of test data
+        batch_size: batch size for output of dataloader
+        model: string identifying which model to tokenize for
+            One of:
+                - bert
+                - xlnet
+                - roberta
+    Returns:
+        PyTorch dataloader objects for training, validation, and testing data
+    """
+
+    # tokenize text for models
     if model == "bert":
         tokens_train, tokens_val, tokens_test = tokenize(BertTokenizerFast.from_pretrained("bert-base-uncased"),
                                                                                     x_train, x_val, test_data)
@@ -135,9 +197,6 @@ def init_dataloaders(x_train, y_train, x_val, y_val, test_data, batch_size=32, m
                                                                                     x_train, x_val, test_data)
     if model == "roberta":
         tokens_train, tokens_val, tokens_test = tokenize(RobertaTokenizerFast.from_pretrained("roberta-base"),
-                                                                                    x_train, x_val, test_data)
-    if model == "xlm-roberta":
-        tokens_train, tokens_val, tokens_test = tokenize(XLMRobertaTokenizerFast.from_pretrained("xlm-roberta-base"),
                                                                                     x_train, x_val, test_data)
                                                             
     # convert data to tensors
@@ -156,6 +215,8 @@ def init_dataloaders(x_train, y_train, x_val, y_val, test_data, batch_size=32, m
     test_features = torch.tensor(test_data["features"].to_list())
     test_y = torch.tensor(test_data["label"].tolist())
 
+
+    # initalize dataloaders
     train_data = TensorDataset(train_seq, train_mask, train_features, train_y)
 
     train_sampler = RandomSampler(train_data)
@@ -175,4 +236,3 @@ def init_dataloaders(x_train, y_train, x_val, y_val, test_data, batch_size=32, m
     test_dataloader = DataLoader(test_data, sampler = test_sampler, batch_size=batch_size)
     
     return train_dataloader, val_dataloader, test_dataloader
-

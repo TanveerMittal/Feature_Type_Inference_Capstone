@@ -10,7 +10,17 @@ else:
     device = torch.device("cpu")
 
 def train(model, train_dataloader, optimizer, cross_entropy):
-  
+    """
+    Trains transformer CNN model for single epoch
+
+    Args:
+        model: PyTorch model object
+        train_dataloader: dataloader object containing training data
+        optimizer: PyTorch optimizer object
+        cross_entropy: PyTorch loss function
+    Returns:
+        Average loss and predictions computed by model
+    """
     model.train()
 
     total_loss, total_accuracy = 0, 0
@@ -69,6 +79,21 @@ def train(model, train_dataloader, optimizer, cross_entropy):
     return avg_loss, total_preds
 
 def train_model(model, train_dataloader, val_dataloader, test_dataloader, test_data, cross_entropy, model_name, epochs=50, lr=1e-5):
+    """
+    Trains transformer CNN model for a given amount of epochs and evaluates it
+
+    Args:
+        model: PyTorch model object
+        train_dataloader: dataloader object containing training data
+        val_dataloader: dataloader object containing validation data
+        test_dataloader: dataloader object containing testing data
+        test_data: Pandas DataFrame of testing data
+        cross_entropy: PyTorch loss function
+        model_name: string identifier of model
+        epochs: number of epochs to train model for
+        lr: learning rate to use in model training
+    """
+
      # set initial loss to infinite
     best_valid_loss = float('inf')
 
