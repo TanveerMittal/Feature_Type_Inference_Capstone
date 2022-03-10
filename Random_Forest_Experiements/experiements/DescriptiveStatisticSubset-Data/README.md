@@ -1,9 +1,7 @@
-## Benchmark Labeled Data
+## Benchmark Labeled Data (Calculated using subset of column data)
 
 
-* data_train and data_test contains the base featurization split of the raw CSV files
-
-* 10_sample_data_train and 10_sample_data_test contains the base featurization split of the raw CSV files with 10 sample values as base features
+* 0.X_sample_data_train and 0.X_sample_data_test contains the base featurization split of the raw CSV files calculated from only 0.X proportion of the column data
 
 * y_act column in the files denote the ground truth label. The coding of the labels is given as follows:
 
@@ -16,9 +14,5 @@
   List: 6 <br />
   Not-Generalizable: 7 <br />
   Custom Object (or Context-Specific): 8
-
-* Metadata/ contains the record id and the source details of the raw CSV files.
-
-* Our-Base-Featurization-Split/ contains the additional features extracted from the base featurized files for the ML models
 
 * The raw data files that we used to create the base featurized files is available here for [download](https://drive.google.com/file/d/1ZPZY2wvDvsmnpQBABLz9ZyZRGvkEmo7B/view?usp=sharing).
